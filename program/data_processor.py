@@ -1,5 +1,5 @@
-import mnist
-import numpy as np
+from __future__ import division
+from sklearn import datasets
 
 
 class DataProcessor:
@@ -7,5 +7,8 @@ class DataProcessor:
         pass
 
     def load_mnist(self):
-        self.data = mnist.train_images().astype(np.float32) / 255.0
-        self.labels = mnist.train_labels()
+        LIMIT = 2000
+        mnist = datasets.fetch_openml('mnist_784')
+        self.data = mnist.data[:LIMIT]
+        self.labels = list(map(int, mnist.target[:LIMIT].tolist()))
+        self.names = [i for i in range(10)]
