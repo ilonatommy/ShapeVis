@@ -2,14 +2,25 @@ from __future__ import division
 
 from algo_comparer import AlgoComparer
 from data_processor import DataProcessor
+from manifold_landmerker import ManifoldLandmarker
 
 
 def main():
-    data_proc = DataProcessor()
-    data_proc.load_mnist()
+    compare = False
+    dev = True
 
-    algo_comparer = AlgoComparer("TSNE")
-    algo_comparer.compare(data_proc)
+    data_proc = DataProcessor()
+    if dev:
+        data_proc.load_artificial_data()
+    else:
+        data_proc.load_mnist()
+
+    landmarker = ManifoldLandmarker()
+    landmarker.create_knn_graph(data_proc)
+
+    if compare:
+        algo_comparer = AlgoComparer("TSNE")
+        algo_comparer.compare(data_proc)
 
 
 if __name__ == '__main__':

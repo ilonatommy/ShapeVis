@@ -12,7 +12,7 @@ class AlgoComparer:
         else:
             print("Transformation not available. Unable to compare.")
 
-    def visualise(self, points_transformed, colors, labels):
+    def visualise_transformed(self, points_transformed, colors, labels):
         points_transformed_t = points_transformed.T
 
         fig = plt.figure()
@@ -26,4 +26,4 @@ class AlgoComparer:
 
     def compare(self, data_processor):
         self.transformed_data = self.transformation.fit_transform(data_processor.data)
-        self.visualise(self.transformed_data, data_processor.labels, data_processor.names)
+        self.visualise_transformed(self.transformed_data, data_processor.labels, data_processor.names)
