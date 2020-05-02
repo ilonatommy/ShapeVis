@@ -15,7 +15,7 @@ def main():
     else:
         data_proc.load_mnist()
 
-    landmarker = ManifoldLandmarker()
+    landmarker = ManifoldLandmarker(data_proc, 0.5)
     landmarker.create_knn_graph(data_proc)
 
     if compare:

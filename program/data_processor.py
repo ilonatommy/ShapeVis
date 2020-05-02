@@ -19,6 +19,6 @@ class DataProcessor:
         self.names = [i for i in range(10)]
 
     def load_artificial_data(self):
-        self.data = np.array([[1, 1.5], [1.75, 1.75], [2.5, 0.5], [0,0], [3,2]])
+        self.data = np.array([[1, 1.5], [1.75, 1.75], [2.5, 0.5], [0.1,0], [3,2]])
         self.labels = [0, 0, 1, 1, 1]
         self.names = range(2)
