@@ -1,6 +1,31 @@
 from __future__ import division
-
 import numpy as np
+
+
+class Graph:
+    def __init__(self, nodes):
+        self.nodes = nodes
+        hashable_nodes = []
+        for node in nodes:
+            hashable_nodes.append(str(node))
+        self.adjacency_dict = {i: [] for i in hashable_nodes}
+        self.adjacent_nodes_dist = {i: [] for i in hashable_nodes}
+
+    def compare_nodes(self, node1, node2):
+        if node1.shape != node2.shape:
+            return False
+        for dim in range(len(node1.shape)):
+            if node1[dim] != node2[dim]:
+                return False
+        return True
+
+    def calculate_distance(self, node1, node2):
+        if node1.shape != node2.shape:
+            return -1
+        sum_dist = 0
+        for dim in range(len(node1.shape)):
+            sum_dist += (node1[dim] - node2[dim]) * (node1[dim] - node2[dim])
+        return np.sqrt(sum_dist)
 
 
 class ManifoldLandmarker:
@@ -21,12 +46,33 @@ class ManifoldLandmarker:
                     break
             if sample:
                 results.append(points)
-        return np.array(results)
+        return results
 
     def __uniform_sampling(self, data_proc):
-        result = []
-        result = self.__sample(data_proc.data, 0, len(data_proc.data.shape), result)
-        print(result)
+        nodes = []
+        return self.__sample(data_proc.data, 0, len(data_proc.data.shape), nodes)
+
+    def __define_k_nn(self, k, graph):
+        for node1 in graph.nodes:
+            nn = 0
+            for node2 in graph.nodes:
+                if graph.compare_nodes(node1, node2):
+                    continue
+                if len(graph.adjacency_dict[str(node1)]) < k:
+                    graph.adjacency_dict[str(node1)].append(node2)
+                    graph.adjacent_nodes_dist[str(node1)].append(graph.calculate_distance(node1, node2))
+                else:
+                    max_dist = np.max(graph.adjacent_nodes_dist[str(node1)])
+                    new_node_dist = graph.calculate_distance(node1, node2)
+                    if new_node_dist < max_dist:
+                        index = graph.adjacent_nodes_dist[str(node1)].index(max_dist)
+                        graph.adjacency_dict[str(node1)][index] = node2
+                        graph.adjacent_nodes_dist[str(node1)][index] = new_node_dist
+
 
     def create_knn_graph(self, data_proc):
-        self.__uniform_sampling(data_proc)
+        k = 1
+        nodes = self.__uniform_sampling(data_proc)
+        graph = Graph(nodes)
+        self.__define_k_nn(k, graph)
+        print(graph.adjacency_dict)
