@@ -1,4 +1,7 @@
 from __future__ import division
+
+from random import randrange
+
 import numpy as np
 
 
@@ -114,6 +117,26 @@ class ManifoldLandmarker:
                 dist = graph.calculate_distance(nearest_node1, nearest_node2)
                 graph.adjacent_nodes_dist[str(nearest_node2)] = dist
 
+    def __select_landmarks(self, graph):
+        landmarks = []
+        revNeigh = []
+        nodes_num = len(graph.nodes)
+        while nodes_num > 0:
+            node_idx = randrange(nodes_num)
+            rand_node = graph.nodes[node_idx]
+            landmarks.append(rand_node)
+            revNeigh.append(graph.adjacency_dict[str(rand_node)])
+            del graph.nodes[node_idx]
+            graph.nodes.remove(graph.adjacency_dict[str(rand_node)]) # zastąpić metodą do usuwania nodów
+            for (k,v) in graph.adjacency_dict:
+                if k == str(rand_node):
+                    del graph.adjacency_dict[k]
+                for neighbour in graph.adjacency_dict[str(rand_node)]:
+                    if graph.contains_node(v, neighbour):
+                        v.remove(neighbour)
+            nodes_num = len(graph.nodes)
+        return landmarks, revNeigh
+
     def create_knn_graph(self, data_proc):
         k = 1
         nodes = self.__uniform_sampling(data_proc)
@@ -121,3 +144,6 @@ class ManifoldLandmarker:
         self.__define_k_nn(k, graph)
         self.__augment_knn(data_proc.data, graph)
         print(graph.adjacency_dict)
+        landmarks, revNeigh = self.__select_landmarks(graph) # nie działa jeszcze
+        print(landmarks)
+        print(revNeigh)
