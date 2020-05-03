@@ -6,7 +6,7 @@ from manifold_landmerker import ManifoldLandmarker
 
 
 def main():
-    compare = True
+    compare = False
     dev = True
 
     data_proc = DataProcessor()
