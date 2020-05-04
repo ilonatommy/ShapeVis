@@ -15,8 +15,3 @@ class DataProcessor:
         self.data = mnist.data[:LIMIT]
         self.labels = list(map(int, mnist.target[:LIMIT].tolist()))
         self.names = [i for i in range(10)]
-
-    def load_artificial_data(self):
-        self.data = np.array([[1, 1.5], [1.75, 1.75], [2.5, 0.5], [0,0], [3,2], [1.25, 0]])
-        self.labels = [0, 1, 1, 0, 1, 0]
-        self.names = range(2)
