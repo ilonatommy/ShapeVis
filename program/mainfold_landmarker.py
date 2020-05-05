@@ -3,6 +3,7 @@ from __future__ import division
 from random import randrange
 
 import numpy as np
+import random
 
 
 class Graph:
@@ -17,12 +18,12 @@ class Graph:
     def contains_node(self, nodes_list, node):
         contains = False
         for n in nodes_list:
-            if self.compare_nodes(n, node):
+            if self.are_equal_nodes(n, node):
                 contains = True
                 break
         return contains
 
-    def compare_nodes(self, node1, node2):
+    def are_equal_nodes(self, node1, node2):
         if node1.shape != node2.shape:
             return False
         for dim in range(len(node1.shape)):
@@ -39,35 +40,23 @@ class Graph:
         return np.sqrt(sum_dist)
 
 
-class ManifoldLandmarker:
-    def __init__(self, data_proc, distance):
-        self.mins =  np.amin(data_proc.data, axis=0)# min values for consecutive dimensions: 0, 1..
-        self.distance = distance
+class UniformSampler:
+    def __init__(self, data : list):
+        self.data = data
 
-    def __sample(self, points, dim, element_dims, results):
-        if len(points.shape) > 1:
-            for i in range(points.shape[dim]):
-                self.__sample(points[i], dim+1, element_dims, results)
-        else:
-            sample = True
-            for point in points:
-                sampled_val = (point - self.mins[dim]) / self.distance
-                if int(sampled_val) != sampled_val:
-                    sample = False
-                    break
-            if sample:
-                results.append(points)
-        return results
+    def sample(self, n):
+        return random.sample(self.data, n)
 
-    def __uniform_sampling(self, data_proc):
-        nodes = []
-        return self.__sample(data_proc.data, 0, len(data_proc.data.shape), nodes)
+class MainfoldLandmarker:
+    def __init__(self, original_input, m : int):
+        self.original_input = original_input
+        self.m = m
 
     def __define_k_nn(self, k, graph):
         for node1 in graph.nodes:
             nn = 0
             for node2 in graph.nodes:
-                if graph.compare_nodes(node1, node2):
+                if graph.are_equal_nodes(node1, node2):
                     continue
                 if len(graph.adjacency_dict[str(node1)]) < k:
                     graph.adjacency_dict[str(node1)].append(node2)
@@ -86,7 +75,7 @@ class ManifoldLandmarker:
         for node1 in data:
             copy = True
             for node2 in graph.nodes:
-                if graph.compare_nodes(node1, node2):
+                if graph.are_equal_nodes(node1, node2):
                     copy = False
                     break
             if copy:
@@ -102,7 +91,7 @@ class ManifoldLandmarker:
             min_distance1 = min(distances)
             nearest_node1 = nodes[distances.index(min_distance1)]
             distances.remove(min_distance1)
-            nodes.remove(nearest_node1)
+            nodes = [elem for elem in nodes if (list(elem) != nearest_node1).all()]
 
             min_distance2 = min(distances)
             nearest_node2 = nodes[distances.index(min_distance2)]
@@ -117,33 +106,11 @@ class ManifoldLandmarker:
                 dist = graph.calculate_distance(nearest_node1, nearest_node2)
                 graph.adjacent_nodes_dist[str(nearest_node2)] = dist
 
-    def __select_landmarks(self, graph):
-        landmarks = []
-        revNeigh = []
-        nodes_num = len(graph.nodes)
-        while nodes_num > 0:
-            node_idx = randrange(nodes_num)
-            rand_node = graph.nodes[node_idx]
-            landmarks.append(rand_node)
-            revNeigh.append(graph.adjacency_dict[str(rand_node)])
-            del graph.nodes[node_idx]
-            graph.nodes.remove(graph.adjacency_dict[str(rand_node)]) # zastąpić metodą do usuwania nodów
-            for (k,v) in graph.adjacency_dict:
-                if k == str(rand_node):
-                    del graph.adjacency_dict[k]
-                for neighbour in graph.adjacency_dict[str(rand_node)]:
-                    if graph.contains_node(v, neighbour):
-                        v.remove(neighbour)
-            nodes_num = len(graph.nodes)
-        return landmarks, revNeigh
 
-    def create_knn_graph(self, data_proc):
-        k = 1
-        nodes = self.__uniform_sampling(data_proc)
+    def create_knn_graph(self, k = 1):
+        nodes = UniformSampler(list(self.original_input.data)).sample(self.m)
+        print(nodes)
         graph = Graph(nodes)
         self.__define_k_nn(k, graph)
-        self.__augment_knn(data_proc.data, graph)
-        print(graph.adjacency_dict)
-        landmarks, revNeigh = self.__select_landmarks(graph) # nie działa jeszcze
-        print(landmarks)
-        print(revNeigh)
+        self.__augment_knn(self.original_input.data, graph)
+        # print(graph.adjacency_dict)
