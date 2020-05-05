@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as np
-import random
+import uniform_sampler
 
 
 class Graph:
@@ -37,13 +37,6 @@ class Graph:
             sum_dist += (node1[dim] - node2[dim]) * (node1[dim] - node2[dim])
         return np.sqrt(sum_dist)
 
-
-class UniformSampler:
-    def __init__(self, data : list):
-        self.data = data
-
-    def sample(self, n):
-        return random.sample(self.data, n)
 
 class WitnessComplexCreator:
     def __init__(self, original_input, m : int):
@@ -106,8 +99,8 @@ class WitnessComplexCreator:
 
 
     def create_knn_graph(self, k = 1):
-        nodes = UniformSampler(list(self.original_input.data)).sample(self.m)
-        print(nodes)
+        nodes = uniform_sampler.UniformSampler(list(self.original_input.data)).sample(self.m)
+        # print(nodes)
         graph = Graph(nodes)
         self.__define_k_nn(k, graph)
         self.__augment_knn(self.original_input.data, graph)
