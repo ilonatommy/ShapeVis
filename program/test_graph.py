@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 import numpy as np
 
-from witness_complex import Graph
+from graph import Graph
 
 TEST_NODES = [np.array([0., 0.]),
               np.array([0., 1.]),

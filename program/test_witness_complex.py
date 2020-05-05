@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 import numpy as np
 
-from witness_complex import WitnessComplexCreator
+from witness_complex import WitnessComplexGraphBuilder
 from uniform_sampler import UniformSampler
 from data_processor import DataProcessor
 from algo_comparer import AlgoComparer
@@ -16,34 +16,31 @@ TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.
 
 class TestWitnessComplex(unittest.TestCase):
 
-    def setUp(self):
+    @patch('uniform_sampler.UniformSampler')
+    def setUp(self, MockUniformSampler):
+        mock_uniform_sampler = MockUniformSampler.return_value
+        expected_nodes = TEST_SAMPLES
+        mock_uniform_sampler.sample.return_value = expected_nodes
+
         stub_data_processor = DataProcessor()
         stub_data_processor.data = TEST_DATA
         stub_data_processor.labels = TEST_LABELS
         stub_data_processor.names = TEST_CLASSES
         
-        self.sut = WitnessComplexCreator(stub_data_processor, len(TEST_SAMPLES))
+        self.sut = WitnessComplexGraphBuilder(stub_data_processor, len(TEST_SAMPLES))
 
-    @patch('uniform_sampler.UniformSampler')
-    def test_knn_graph_creation(self, MockUniformSampler):
-        mock_uniform_sampler = MockUniformSampler.return_value
-        expected_nodes = TEST_SAMPLES
-        mock_uniform_sampler.sample.return_value = expected_nodes
+    def test_knn_graph_creation(self):
+        self.sut.build_knn()
+        adjacency_dict = self.sut.get_graph().adjacency_dict
+        # TODO assert
 
-
-
-    @patch('uniform_sampler.UniformSampler')
-    def test_final_adjacency_dict(self, MockUniformSampler):
-        mock_uniform_sampler = MockUniformSampler.return_value
-        expected_nodes = TEST_SAMPLES
-        mock_uniform_sampler.sample.return_value = expected_nodes
-
-        adjacency_dict = self.sut.create_knn_graph()
+    def test_final_adjacency_dict(self, ):
+        self.sut.build_knn()
+        self.sut.build_augmented_knn()
+        adjacency_dict = self.sut.get_graph().adjacency_dict
         expected_adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5]), np.array([1.25, 0.  ])],
                                    '[1.  1.5]': [np.array([1.75, 1.75]), np.array([1.25, 0.  ])],
                                    '[1.25 0.  ]': [np.array([1. , 1.5]), np.array([1.75, 1.75])]}
-
-        # TODO remove for loop from test
         for key in expected_adjacency_dict.keys():
             np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
         
