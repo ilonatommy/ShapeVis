@@ -13,6 +13,7 @@ TEST_LABELS = [0, 1, 1, 0, 1, 0]
 TEST_CLASSES = range(2)
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ])]
 
+
 class TestWitnessComplex(unittest.TestCase):
 
     def setUp(self):
@@ -24,13 +25,28 @@ class TestWitnessComplex(unittest.TestCase):
         self.sut = WitnessComplexCreator(stub_data_processor, len(TEST_SAMPLES))
 
     @patch('uniform_sampler.UniformSampler')
-    def test_dummy(self, MockUniformSampler):
+    def test_knn_graph_creation(self, MockUniformSampler):
         mock_uniform_sampler = MockUniformSampler.return_value
         expected_nodes = TEST_SAMPLES
         mock_uniform_sampler.sample.return_value = expected_nodes
-        nodes = self.sut.create_knn_graph()
 
 
+
+    @patch('uniform_sampler.UniformSampler')
+    def test_final_adjacency_dict(self, MockUniformSampler):
+        mock_uniform_sampler = MockUniformSampler.return_value
+        expected_nodes = TEST_SAMPLES
+        mock_uniform_sampler.sample.return_value = expected_nodes
+
+        adjacency_dict = self.sut.create_knn_graph()
+        expected_adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5]), np.array([1.25, 0.  ])],
+                                   '[1.  1.5]': [np.array([1.75, 1.75]), np.array([1.25, 0.  ])],
+                                   '[1.25 0.  ]': [np.array([1. , 1.5]), np.array([1.75, 1.75])]}
+
+        # TODO remove for loop from test
+        for key in expected_adjacency_dict.keys():
+            np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
+        
 
 
 if __name__ == '__main__':

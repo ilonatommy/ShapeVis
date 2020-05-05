@@ -33,9 +33,19 @@ class Graph:
         if node1.shape != node2.shape:
             return -1
         sum_dist = 0
-        for dim in range(len(node1.shape)):
+        for dim in range(node1.shape[0]):
             sum_dist += (node1[dim] - node2[dim]) * (node1[dim] - node2[dim])
         return np.sqrt(sum_dist)
+
+    def has_node_less_than_k_neighbors(self, node, k):
+        return len(self.adjacency_dict[str(node)]) < k
+
+    def __str__(self):
+        graph_summary = ""
+        graph_summary += "Graph nodes: " + str(self.nodes)
+        graph_summary += "\nGraph adjacency_dict: " + str(self.adjacency_dict)
+        graph_summary += "\nGraph adjacent_nodes_dist: " + str(self.adjacent_nodes_dist)
+        return graph_summary
 
 
 class WitnessComplexCreator:
@@ -45,11 +55,10 @@ class WitnessComplexCreator:
 
     def __define_k_nn(self, k, graph):
         for node1 in graph.nodes:
-            nn = 0
             for node2 in graph.nodes:
                 if graph.are_equal_nodes(node1, node2):
                     continue
-                if len(graph.adjacency_dict[str(node1)]) < k:
+                if graph.has_node_less_than_k_neighbors(node1, k):
                     graph.adjacency_dict[str(node1)].append(node2)
                     graph.adjacent_nodes_dist[str(node1)].append(graph.calculate_distance(node1, node2))
                 else:
@@ -100,8 +109,7 @@ class WitnessComplexCreator:
 
     def create_knn_graph(self, k = 1):
         nodes = uniform_sampler.UniformSampler(list(self.original_input.data)).sample(self.m)
-        # print(nodes)
         graph = Graph(nodes)
         self.__define_k_nn(k, graph)
         self.__augment_knn(self.original_input.data, graph)
-        # print(graph.adjacency_dict)
+        return graph.adjacency_dict
