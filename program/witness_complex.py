@@ -1,7 +1,5 @@
 from __future__ import division
 
-from random import randrange
-
 import numpy as np
 import random
 
@@ -47,7 +45,7 @@ class UniformSampler:
     def sample(self, n):
         return random.sample(self.data, n)
 
-class MainfoldLandmarker:
+class WitnessComplexCreator:
     def __init__(self, original_input, m : int):
         self.original_input = original_input
         self.m = m

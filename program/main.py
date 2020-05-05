@@ -2,7 +2,7 @@ from __future__ import division
 
 from algo_comparer import AlgoComparer
 from data_processor import DataProcessor
-from mainfold_landmarker import MainfoldLandmarker
+from witness_complex import WitnessComplexCreator
 
 
 def main():
@@ -11,8 +11,8 @@ def main():
     data_proc = DataProcessor()
     data_proc.load_mnist()
 
-    landmarker = MainfoldLandmarker(data_proc, 4)
-    landmarker.create_knn_graph()
+    wcc = WitnessComplexCreator(data_proc, 4)
+    wcc.create_knn_graph()
 
     if compare:
         algo_comparer = AlgoComparer("TSNE")

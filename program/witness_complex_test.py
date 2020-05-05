@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 import numpy as np
 
-from mainfold_landmarker import MainfoldLandmarker, UniformSampler
+from witness_complex import WitnessComplexCreator, UniformSampler
 from data_processor import DataProcessor
 
 
@@ -14,7 +14,7 @@ class TestMainfoldLandmarker(unittest.TestCase):
         stub_data_processor.labels = [0, 1, 1, 0, 1, 0]
         stub_data_processor.names = range(2)
 
-        self.sut = MainfoldLandmarker(stub_data_processor, 3)
+        self.sut = WitnessComplexCreator(stub_data_processor, 3)
 
     @patch('mainfold_landmarker.UniformSampler')
     def test_dummy(self, MockUniformSampler):
