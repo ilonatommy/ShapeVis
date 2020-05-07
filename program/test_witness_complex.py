@@ -13,6 +13,9 @@ TEST_LABELS = [0, 1, 1, 0, 1, 0]
 TEST_CLASSES = range(2)
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ])]
 
+def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
+    for key in expected_adjacency_dict.keys():
+        np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
 
 class TestWitnessComplex(unittest.TestCase):
 
@@ -31,18 +34,21 @@ class TestWitnessComplex(unittest.TestCase):
 
     def test_knn_graph_creation(self):
         self.sut.build_knn()
+        expected_adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5])],
+                                   '[1.  1.5]': [np.array([1.75, 1.75])],
+                                   '[1.25 0.  ]': [np.array([1. , 1.5])]}
         adjacency_dict = self.sut.get_graph().adjacency_dict
-        # TODO assert
+        assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict)
 
-    def test_final_adjacency_dict(self, ):
+    def test_knn_augmentation(self, ):
         self.sut.build_knn()
         self.sut.build_augmented_knn()
         adjacency_dict = self.sut.get_graph().adjacency_dict
         expected_adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5]), np.array([1.25, 0.  ])],
                                    '[1.  1.5]': [np.array([1.75, 1.75]), np.array([1.25, 0.  ])],
                                    '[1.25 0.  ]': [np.array([1. , 1.5]), np.array([1.75, 1.75])]}
-        for key in expected_adjacency_dict.keys():
-            np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
+        assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict)
+
         
 
 

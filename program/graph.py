@@ -10,38 +10,34 @@ class Graph:
         self.adjacency_dict = {i: [] for i in hashable_nodes}
         self.adjacent_nodes_dist = {i: [] for i in hashable_nodes}
 
+    # TODO zmienić docelowo na are_neighobours czy coś takiego być może - to graf bezkierunkowy
     def is_node2_neighbor_of_node1(self, node1, node2):
-        contains = False
         for n in self.adjacency_dict[str(node1)]:
             if self.are_equal_nodes(n, node2):
-                contains = True
-                break
-        return contains
-
-    def are_equal_nodes(self, node1, node2):
-        if node1.shape != node2.shape:
-            return False
-        for dim in range(len(node1.shape)):
-            if node1[dim] != node2[dim]:
-                return False
-        return True
-
-    def calculate_distance(self, node1, node2):
-        if node1.shape != node2.shape:
-            return -1
-        sum_dist = 0
-        for dim in range(node1.shape[0]):
-            sum_dist += (node1[dim] - node2[dim]) * (node1[dim] - node2[dim])
-        return np.sqrt(sum_dist)
+                return True
+        return False
 
     def has_node_less_than_k_neighbors(self, node, k):
         return len(self.adjacency_dict[str(node)]) < k
 
     def has_node(self, node):
         for n in self.nodes:
-            if (n == node).all():
+            if self.are_equal_nodes(n, node):
                 return True
-        return False  
+        return False
+
+    @staticmethod
+    def are_equal_nodes(node1, node2):
+        return node1.shape == node2.shape and (list(node1) == node2).all()
+
+    @staticmethod
+    def calculate_distance(node1, node2):
+        if node1.shape != node2.shape:
+            return -1
+        sum_dist = 0
+        for dim in range(node1.shape[0]):
+            sum_dist += (node1[dim] - node2[dim]) * (node1[dim] - node2[dim])
+        return np.sqrt(sum_dist)
 
     def __str__(self):
         graph_summary = ""
