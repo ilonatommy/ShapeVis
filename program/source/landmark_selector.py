@@ -1,5 +1,4 @@
-import graph
-import uniform_sampler
+from source import graph, uniform_sampler
 
 
 class LandmarkSelector:

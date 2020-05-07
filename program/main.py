@@ -1,9 +1,9 @@
 from __future__ import division
 
-from algo_comparer import AlgoComparer
-from data_processor import DataProcessor
-from witness_complex import WitnessComplexGraphBuilder
-from graph import Graph
+from source.algo_comparer import AlgoComparer
+from source.data_processor import DataProcessor
+from source.witness_complex import WitnessComplexGraphBuilder
+from source.graph import Graph
 
 def main():
     compare = False

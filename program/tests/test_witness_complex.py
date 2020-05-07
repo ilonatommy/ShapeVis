@@ -2,11 +2,10 @@ import unittest
 from unittest.mock import patch, Mock
 import numpy as np
 
-from witness_complex import WitnessComplexGraphBuilder
-from uniform_sampler import UniformSampler
-from data_processor import DataProcessor
-from algo_comparer import AlgoComparer
-
+from source.witness_complex import WitnessComplexGraphBuilder
+from source.uniform_sampler import UniformSampler
+from source.data_processor import DataProcessor
+from source.algo_comparer import AlgoComparer
 
 TEST_DATA = np.array([[1, 1.5], [1.75, 1.75], [2.5, 0.5], [0,0], [3,2], [1.25, 0]])
 TEST_LABELS = [0, 1, 1, 0, 1, 0]
@@ -19,7 +18,7 @@ def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
 
 class TestWitnessComplex(unittest.TestCase):
 
-    @patch('uniform_sampler.UniformSampler')
+    @patch('source.uniform_sampler.UniformSampler')
     def setUp(self, MockUniformSampler):
         mock_uniform_sampler = MockUniformSampler.return_value
         expected_nodes = TEST_SAMPLES

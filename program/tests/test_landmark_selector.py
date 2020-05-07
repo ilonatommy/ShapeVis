@@ -2,8 +2,9 @@ import unittest
 from unittest.mock import patch, Mock
 import numpy as np
 
-from landmark_selector import LandmarkSelector
-from graph import Graph
+from source.uniform_sampler import UniformSampler
+from source.graph import Graph
+from source.landmark_selector import LandmarkSelector
 
 TEST_DATA = np.array([[1, 1.5], [1.75, 1.75], [2.5, 0.5], [0,0], [3,2], [1.25, 0], [0., 2.], [4., 0.], [2., 1], [3.5, 1], [0.5, 2.5], [0.5, 1]])
 TEST_LABELS = [0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0]
@@ -26,7 +27,7 @@ class TestLandmarkSelector(unittest.TestCase):
                                 '[0.5 1. ]': [np.array([1. , 1.5]), np.array([1.25, 0.  ])]}
         self.sut = LandmarkSelector(graph)
 
-    @patch('uniform_sampler.UniformSampler')
+    @patch('source.uniform_sampler.UniformSampler')
     def test_dummy(self, MockUniformSampler):
         LANDMARKS = [np.array([0.5, 2.5]),
                      np.array([0.5, 1. ]),

@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 import numpy as np
 
-from graph import Graph
+from source.graph import Graph
 
 TEST_NODES = [np.array([0., 0.]),
               np.array([0., 1.]),

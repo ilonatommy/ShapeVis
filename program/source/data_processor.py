@@ -10,7 +10,7 @@ class DataProcessor:
         self.names = []
 
     def load_mnist(self):
-        LIMIT = 20
+        LIMIT = 5
         mnist = datasets.fetch_openml('mnist_784')
         self.data = mnist.data[:LIMIT]
         self.labels = list(map(int, mnist.target[:LIMIT].tolist()))
