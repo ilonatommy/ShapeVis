@@ -6,4 +6,4 @@ class UniformSampler:
         self.data = data
 
     def sample(self, n):
-        return random.sample(self.data, n)
+        return random.sample(self.data, n = 1)

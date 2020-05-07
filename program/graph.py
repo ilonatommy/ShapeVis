@@ -26,6 +26,23 @@ class Graph:
                 return True
         return False
 
+    # TODO jakby inaczej przechowywać to, można by uniknąć przechodzenia po całym słowniku
+    # żeby wychwycić węzeł w jakiejś liście
+    def __remove_node_from_neigbours_list(self, node : list):
+        for key in self.adjacency_dict:
+            self.adjacency_dict[key] = [n for n in self.adjacency_dict[key] if (list(n) != node).any()]
+
+    def __remove_neigbours_list_of_node(self, node : list):
+        del self.adjacency_dict[str(node)]
+
+    def __remove_node(self, node):
+        self.nodes = [n for n in self.nodes if (list(n) != node).any()]
+
+    def remove_node(self, node : list):
+        self.__remove_node_from_neigbours_list(node)
+        self.__remove_neigbours_list_of_node(node)
+        self.__remove_node(node)
+
     @staticmethod
     def are_equal_nodes(node1, node2):
         return node1.shape == node2.shape and (list(node1) == node2).all()
