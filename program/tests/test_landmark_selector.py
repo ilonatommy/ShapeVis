@@ -30,18 +30,15 @@ class TestLandmarkSelector(unittest.TestCase):
 
     @patch('source.uniform_sampler.UniformSampler')
     def test_dummy(self, MockUniformSampler):
-        LANDMARKS = [np.array([0.5, 2.5]),
-                     np.array([0.5, 1. ]),
-                     np.array([4., 0.])]
+        LANDMARKS = [np.array([0.5, 2.5]), np.array([0.5, 1. ]), np.array([4., 0.])]
+        #LANDMARKS = {'[0.5 2.5]': 0, '[0.5 1. ]': 1, '[4. 0.]': 2} #prawdziwe landmarki, ale nie do mockowania samplera
         mock_uniform_sampler = MockUniformSampler.return_value
         expected_nodes = TEST_SAMPLES1
         mock_uniform_sampler.sample.side_effect = LANDMARKS
 
         self.sut.select_landmarks(l=1)
         landmarks = self.sut.get_landmarks()
-        print(landmarks)
         rev_neigh = self.sut.get_rev_neigh()
-        print(rev_neigh)
         expected_rev_neigh = {'[1.  1.5]': np.array([0.5, 2.5]),
                               '[1.25 0.  ]': np.array([0.5, 1. ]),
                               '[1.75 1.75]': np.array([4., 0.]),
