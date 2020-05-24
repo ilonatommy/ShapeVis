@@ -192,7 +192,7 @@ class CommunityDetector:
                             weight = tmp_community.get_weights_between(n1, n2)
                         new_weights[c1_idx][c2_idx] += weight
                         new_weights[c2_idx][c1_idx] += weight
-
+        new_weights /= 2
         return CommunityDetector(new_graph, self.landmarks, self.rev_neigh, new_weights, from_landmarks=False)
 
     def __deep_copy(self, src_detector):
