@@ -35,8 +35,8 @@ class TestLandmarkSelector(unittest.TestCase):
             '[3. 2.]': [np.array([1.75, 1.75]), np.array([0.5, 2.5]), np.array([4., 0.])]}
         landmarks_cnt = len(LANDMARKS)
         beta = 3
-        theta1 = 3
-        theta2 = 6
+        theta1 = 10
+        theta2 = 20
         self.sut = RandomWalker(graph, landmarks_cnt, beta, theta1, theta2)
 
     @patch('source.random_choice.RandomChoice')

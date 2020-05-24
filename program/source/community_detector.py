@@ -36,7 +36,8 @@ class Community:
             return total_sum
         for node1 in self.nodes:
             for node2 in self.nodes:
-                if not Graph.are_equal_nodes(node1, node2):
+                # if the nodes are connected then check what is the weight of the connection:
+                if self.graph.adjacency_dict[node1].any() == node2:
                     if from_landmarks:
                         weight = self.get_landmarks_weight_between(node1, node2)
                     else:
