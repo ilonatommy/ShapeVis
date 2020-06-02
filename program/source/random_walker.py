@@ -1,7 +1,6 @@
 import numpy as np
 import random
-from source import graph
-from source.random_choice import RandomChoice
+from source import graph, randomizer
 
 
 class RandomWalker:
@@ -19,14 +18,14 @@ class RandomWalker:
     def __walk_landmark(self, landmark, theta):
         current_node = landmark
         for step in range(theta):
-            random_choice = RandomChoice(self.graph.adjacency_dict[str(current_node)])
-            current_node = random_choice.choose()
+            rand_choice = randomizer.Randomizer(self.graph.adjacency_dict[str(current_node)])
+            current_node = rand_choice.choose()
         return current_node
 
     def walk(self, landmarks, rev_neigh):
         for time in range(self.beta):
             for landmark in landmarks:
-                theta = random.randint(self.theta1, self.theta2)
+                theta = randomizer.Randomizer.rand_int(self.theta1, self.theta2)
                 endpoint = self.__walk_landmark(landmark, theta)
                 try: # nie każdy endpoint jest tutaj w revNeigh - niektóre są landmarkami
                     l_j = rev_neigh[str(endpoint)]
@@ -37,7 +36,6 @@ class RandomWalker:
                 self.n_matrix[i][j] = self.n_matrix[i][j] + 1
 
     def calculate_weigths(self, threshold):
-        # sumowanie po rzędach, bo chyba o to chodzi z tym k
         self.a_matrix = np.where(self.n_matrix < threshold, 0, self.n_matrix) / self.n_matrix.sum(axis=1)
         self.w_matrix = self.a_matrix + self.a_matrix.T - self.a_matrix * self.a_matrix.T
 

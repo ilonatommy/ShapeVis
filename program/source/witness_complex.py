@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as np
-from source import uniform_sampler
+from source import randomizer
 from source.graph import Graph
 
 
@@ -9,7 +9,7 @@ class WitnessComplexGraphBuilder:
     def __init__(self, original_input, m : int):
         self.original_input = original_input
         self.m = m
-        nodes = uniform_sampler.UniformSampler(list(self.original_input.data)).sample(self.m)
+        nodes = randomizer.Randomizer(list(self.original_input.data)).sample(self.m)
         self.graph = Graph(nodes)
 
     def __create_unsampled_nodes(self):

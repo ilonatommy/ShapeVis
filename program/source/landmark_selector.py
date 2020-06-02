@@ -1,4 +1,4 @@
-from source import graph, uniform_sampler
+from source import graph, randomizer
 
 
 class LandmarkSelector:
@@ -11,7 +11,7 @@ class LandmarkSelector:
     def select_landmarks(self, l: int):
         l_idx = 0
         while len(self.graph.nodes) > 0:
-            landmark = uniform_sampler.UniformSampler(list(self.graph.nodes)).sample()
+            landmark = randomizer.Randomizer(list(self.graph.nodes)).sample()
             self.landmarks[str(landmark)] = l_idx
 
             # TODO uzupełnić słownik, aby byli widoczni sąsiedzi z drugiej strony

@@ -3,7 +3,7 @@ from unittest.mock import patch, Mock
 import numpy as np
 
 from source.witness_complex import WitnessComplexGraphBuilder
-from source.uniform_sampler import UniformSampler
+from source.randomizer import Randomizer
 from source.data_processor import DataProcessor
 from source.algo_comparer import AlgoComparer
 
@@ -18,11 +18,11 @@ def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
 
 class TestWitnessComplex(unittest.TestCase):
 
-    @patch('source.uniform_sampler.UniformSampler')
-    def setUp(self, MockUniformSampler):
-        mock_uniform_sampler = MockUniformSampler.return_value
+    @patch('source.randomizer.Randomizer')
+    def setUp(self, MockRandomizer):
+        mock_randomizer = MockRandomizer.return_value
         expected_nodes = TEST_SAMPLES
-        mock_uniform_sampler.sample.return_value = expected_nodes
+        mock_randomizer.sample.return_value = expected_nodes
 
         stub_data_processor = DataProcessor()
         stub_data_processor.data = TEST_DATA
