@@ -2,95 +2,8 @@ import numpy as np
 
 from source import graph
 from source.graph import Graph
-
-
-class Community:
-    def __init__(self, graph: graph.Graph, landmarks, rev_neigh, weights):
-        self.landmarks = landmarks
-        self.rev_neigh = rev_neigh
-        self.weights = weights
-        self.graph = graph
-
-        self.weights_total = 0
-        self.weights_inside = 0
-        self.nodes = []
-
-    def get_landmarks_weight_between(self, node1, node2):
-        try:
-            w_n1_idx = self.landmarks[str(self.rev_neigh[str(node1)])]
-        except:
-            w_n1_idx = self.landmarks[str(node1)]
-        try:
-            w_n2_idx = self.landmarks[str(self.rev_neigh[str(node2)])]
-        except:
-            w_n2_idx = self.landmarks[str(node2)]
-        return self.weights[w_n1_idx][w_n2_idx]
-
-    def get_weights_between(self, node1, node2):
-        return self.weights[node1][node2]
-
-    def __get_weight_inside_community(self, from_landmarks):
-        total_sum = 0
-        # if we have only 1 node in community, so no edges then return 0
-        if len(self.nodes) < 2:
-            return total_sum
-        for node1 in self.nodes:
-            for node2 in self.nodes:
-                # if the nodes are connected then check what is the weight of the connection:
-                if self.graph.is_node2_neighbor_of_node1(node1, node2):
-                    if from_landmarks:
-                        weight = self.get_landmarks_weight_between(node1, node2)
-                    else:
-                        weight = self.get_weights_between(node1, node2)
-                    total_sum += weight
-        # for 2 nodes we have 1 weight, which is added twice, but we need it only once
-        return total_sum / 2
-
-    def get_community_weights(self, from_landmarks):
-        # the amount we will get is: tmp_weight = 2*w_inside_comm + 1*incident_weights
-        tmp_weight = 0
-        for node in self.nodes:
-            neighbours = self.graph.adjacency_dict[str(node)]
-            for neigh in neighbours:
-                if from_landmarks:
-                    tmp_weight += self.get_landmarks_weight_between(node, neigh)
-                else:
-                    tmp_weight += self.get_weights_between(node, neigh)
-        weights_inside = self.__get_weight_inside_community(from_landmarks)
-        weights_total = tmp_weight - weights_inside
-        return weights_inside, weights_total
-
-    def get_weights_between_node_and_community(self, neighbours, node_i, from_landmarks): # returns k_i,in
-        total_weight = 0
-        coeff = 1
-        # if from landmarks then find intersection by looping, hashing numpy arrays is impossible
-        if from_landmarks:
-            # each node will be added twice into list, so weights have to be divided by 2:
-            coeff = 0.5
-            intersection_list = []
-            for node1 in self.nodes:
-                for node2 in neighbours:
-                    if self.graph.are_equal_nodes(node1, node2):
-                        intersection_list.append(node1)
-        # else, hashing integers into sets is possible
-        else:
-            intersection_list = list(set(self.nodes) & set(neighbours))
-        for community_neigh in intersection_list:
-            total_weight += self.get_landmarks_weight_between(node_i, community_neigh)
-        return total_weight * coeff
-
-    def get_weights_of_incident_nodes(self, neighbours, node_i):
-        total_weight = 0
-        for neigh in neighbours:
-            total_weight += self.get_landmarks_weight_between(node_i, neigh)
-        return total_weight
-
-    def deep_copy(self):
-        community = Community(self.graph, self.landmarks, self.rev_neigh, self.weights)
-        community.nodes = list.copy(self.nodes)
-        community.weights_total = self.weights_total
-        community.weights_inside = self.weights_inside
-        return community
+from source import community
+from source.community import Community
 
 
 class CommunityDetector:
@@ -131,23 +44,26 @@ class CommunityDetector:
         w_inside, w_total = dest_community_cpy.get_community_weights(from_landmarks)
         node_neighbours = self.graph.adjacency_dict[str(node)]
         k_i_in = dest_community_cpy.get_weights_between_node_and_community(node_neighbours, node, from_landmarks)
-        k_i = dest_community_cpy.get_weights_of_incident_nodes(node_neighbours, node)
-        d_Q = (k_i_in - 2*w_total * k_i) / (2 * self.m) # czy na pewno taki wzor?
+        k_i = dest_community_cpy.get_weights_of_incident_nodes(node_neighbours, node, from_landmarks)
+        d_Q = (k_i_in - (2*w_total * k_i)/(2 * self.m)) / (2 * self.m) # czy na pewno taki wzor?
         return d_Q
 
-    @staticmethod
-    def __shift_node_from_community(source_community: Community, dest_community: Community, node, from_landmarks):
+    def __shift_node_from_community(self, source_community: Community, dest_community_idx: Community, node, from_landmarks):
+        dest_community = self.communities[dest_community_idx]
+
         source_community.nodes = [n for n in source_community.nodes if (list(n) != node).any()]
         source_community.weights_inside, source_community.weights_total = \
             source_community.get_community_weights(from_landmarks)
+
         dest_community.nodes.append(node)
         dest_community.weights_inside, dest_community.weights_total = \
             dest_community.get_community_weights(from_landmarks)
+        self.communities_dict[(str(node))] = dest_community_idx
 
     def fit_communities(self, from_landmarks):
         repeat = True
-        iteration_idx = 0
-        while repeat :
+        was_modularity_improved = False
+        while repeat:
             repeat = False
             for node in self.graph.nodes:
                 src_community_idx = self.communities_dict[str(node)]
@@ -158,19 +74,29 @@ class CommunityDetector:
                     community_idx = self.communities_dict[str(neigh)]
                     neighbour_community = self.communities[community_idx]
                     d_Q.append(self.__check_modularity_gain(node, neighbour_community, from_landmarks))
-                max_dQ = max(d_Q)
+                if len(d_Q) > 0:
+                    max_dQ = max(d_Q)
+                else:
+                    continue
+
                 if max_dQ > 0:
+                    dest_community_idx = self.communities_dict[str(neigh)]
+                    if dest_community_idx == src_community_idx:
+                        continue
+
                     repeat = True
-                    iteration_idx += 1
+                    was_modularity_improved = True
                     neigh = neighbours[d_Q.index(max_dQ)]
-                    community_idx = self.communities_dict[str(neigh)]
-                    dest_community = self.communities[community_idx]
-                    self.__shift_node_from_community(src_community, dest_community, node, from_landmarks)
-        return iteration_idx
+                    self.__shift_node_from_community(src_community, dest_community_idx, node, from_landmarks)
+        
+        return was_modularity_improved
 
     def __get_graph_from_communities(self, from_landmarks):
         communities_number = len(self.communities)
-        new_graph = Graph(range(communities_number))
+        communities = []
+        for i in range(communities_number):
+            communities.append(np.array([i]))
+        new_graph = Graph(communities)
         new_weights = np.zeros((communities_number, communities_number))
         tmp_community = Community(self.graph, self.landmarks, self.rev_neigh, self.weights)
 
@@ -183,13 +109,13 @@ class CommunityDetector:
                     # and are neighbours for each other:
                     if self.graph.is_node2_neighbor_of_node1(n1, n2):
                         # new nodes made from these communities will be neighbours:
-                        new_graph.adjacency_dict[str(c1_idx)].append(c2_idx)
-                        new_graph.adjacency_dict[str(c2_idx)].append(c1_idx)
+                        new_graph.adjacency_dict[str(np.array([c1_idx]))].append(np.array([c2_idx]))
+                        new_graph.adjacency_dict[str(np.array([c2_idx]))].append(np.array([c1_idx]))
                         # find weights between n1 and n2
                         if from_landmarks:
                             weight = tmp_community.get_landmarks_weight_between(n1, n2)
                         else:
-                            weight = tmp_community.get_weights_between(n1, n2)
+                            weight = tmp_community.get_weights_between(n1[0], n2[0])
                         new_weights[c1_idx][c2_idx] += weight
                         new_weights[c2_idx][c1_idx] += weight
         new_weights /= 2
@@ -209,9 +135,7 @@ class CommunityDetector:
         from_landmarks = True
         while repeat:
             # step 1 - fit communities
-            iterations = self.fit_communities(from_landmarks)
-            if iterations == 0:
-                repeat = False
+            repeat = self.fit_communities(from_landmarks)
             # step 2 - rebuild the graph: each community is a new node
             new_detector = self.__get_graph_from_communities(from_landmarks)
             self.__deep_copy(new_detector)
