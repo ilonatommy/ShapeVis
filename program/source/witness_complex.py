@@ -9,8 +9,11 @@ class WitnessComplexGraphBuilder:
     def __init__(self, original_input, m : int):
         self.original_input = original_input
         self.m = m
-        nodes = randomizer.Randomizer(list(self.original_input.data)).sample(self.m)
-        self.graph = Graph(nodes)
+        indexes = randomizer.Randomizer(list(range(len(self.original_input.data)))).sample(self.m)
+        nodes = self.original_input.data[indexes]
+        labels = self.original_input.labels[indexes]
+        
+        self.graph = Graph(nodes, labels)
 
     def __create_unsampled_nodes(self):
         unsampled_nodes = [node for node in self.original_input.data if not self.graph.has_node(node)]

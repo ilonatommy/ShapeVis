@@ -8,8 +8,10 @@ from source.data_processor import DataProcessor
 from source.algo_comparer import AlgoComparer
 
 TEST_DATA = np.array([[1, 1.5], [1.75, 1.75], [2.5, 0.5], [0,0], [3,2], [1.25, 0]])
-TEST_LABELS = [0, 1, 1, 0, 1, 0]
+TEST_LABELS = np.array([0, 1, 1, 0, 1, 0])
 TEST_CLASSES = range(2)
+
+TEST_SAMPLES_IDXS = [1, 0, 5]
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ])]
 
 def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
@@ -22,7 +24,7 @@ class TestWitnessComplex(unittest.TestCase):
     def setUp(self, MockRandomizer):
         mock_randomizer = MockRandomizer.return_value
         expected_nodes = TEST_SAMPLES
-        mock_randomizer.sample.return_value = expected_nodes
+        mock_randomizer.sample.return_value = TEST_SAMPLES_IDXS
 
         stub_data_processor = DataProcessor()
         stub_data_processor.data = TEST_DATA
@@ -47,6 +49,7 @@ class TestWitnessComplex(unittest.TestCase):
                                    '[1.  1.5]': [np.array([1.75, 1.75]), np.array([1.25, 0.  ])],
                                    '[1.25 0.  ]': [np.array([1. , 1.5]), np.array([1.75, 1.75])]}
         assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict)
+        print(self.sut.get_graph().labels)
 
         
 
