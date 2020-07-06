@@ -170,7 +170,7 @@ class CommunityDetector:
 
     def __get_graph_from_communities(self, from_landmarks):
         communities_number = len(self.communities)
-        new_graph = Graph(range(communities_number))
+        new_graph = Graph(range(communities_number), range(communities_number))
         new_weights = np.zeros((communities_number, communities_number))
         tmp_community = Community(self.graph, self.landmarks, self.rev_neigh, self.weights)
 

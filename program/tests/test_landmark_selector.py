@@ -7,7 +7,7 @@ from source.graph import Graph
 from source.landmark_selector import LandmarkSelector
 
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ]), np.array([4., 0.]), np.array([0.5, 2.5]), np.array([0.5, 1]), np.array([3, 2])]
-
+TEST_LABELS = np.array(list(range(len(TEST_SAMPLES))))
 def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
     for key in expected_adjacency_dict.keys():
         np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
@@ -15,7 +15,7 @@ def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
 class TestLandmarkSelector(unittest.TestCase):
     
     def setUp(self):
-        graph = Graph(TEST_SAMPLES)
+        graph = Graph(TEST_SAMPLES, TEST_LABELS)
         graph.adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5]), np.array([1.25, 0.  ]), np.array([4., 0.]), np.array([3, 2])],
                                 '[1.  1.5]': [np.array([0.5, 1. ]), np.array([1.75, 1.75]), np.array([0.5, 2.5])],
                                 '[1.25 0.  ]': [np.array([0.5, 1. ]), np.array([1.75, 1.75])],

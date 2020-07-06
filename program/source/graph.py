@@ -2,13 +2,14 @@ import numpy as np
 
 
 class Graph:
-    def __init__(self, nodes):
+    def __init__(self, nodes, labels):
         self.nodes = nodes
         hashable_nodes = []
         for node in nodes:
             hashable_nodes.append(str(node))
         self.adjacency_dict = {i: [] for i in hashable_nodes}
         self.adjacent_nodes_dist = {i: [] for i in hashable_nodes}
+        self.labels = {node: label for node, label in zip(hashable_nodes, labels)}
 
     # TODO zmienić docelowo na are_neighobours czy coś takiego być może - to graf bezkierunkowy
     def is_node2_neighbor_of_node1(self, node1, node2):
