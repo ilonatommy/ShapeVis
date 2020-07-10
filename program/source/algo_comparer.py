@@ -82,4 +82,6 @@ class AlgoComparer:
     def compare(self, data_processor):
         self.transformed_data = self.transformation.fit_transform(data_processor.data)
         self.check_method_quality(data_processor.names, data_processor.labels, self.transformed_data)
-        self.visualise_transformed(self.transformed_data, data_processor.labels, data_processor.names)
+        self.visualise_transformed(self.transformed_data, list(map(int, data_processor.labels.tolist())), data_processor.names)
+
+        # self.visualise_transformed(self.transformed_data, list(map(int, data_processor.labels.tolist())), data_processor.names)

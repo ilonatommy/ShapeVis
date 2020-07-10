@@ -5,14 +5,14 @@ import networkx as nx
 class LandmarkSelector:
 
     def __init__(self, graph: nx.Graph):
-        self.graph = graph
+        self.graph = graph.copy()
         self.landmarks = dict()
         self.rev_neigh = dict()
 
-    def select_landmarks(self, l: int):
+    def select_landmarks(self):
         l_idx = 0
         while len(self.graph.nodes) > 0:
-            landmark = randomizer.Randomizer(list(self.graph.nodes)).sample()
+            landmark = randomizer.Randomizer(list(self.graph.nodes)).choose()
             self.landmarks[str(landmark)] = l_idx
 
             landmark_neighbors_info = self.graph[str(landmark)].items()

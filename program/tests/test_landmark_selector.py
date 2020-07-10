@@ -39,9 +39,9 @@ class TestLandmarkSelector(unittest.TestCase):
         LANDMARKS = [np.array([0.5, 2.5]), np.array([0.5, 1. ]), np.array([4., 0.])]
         #LANDMARKS = {'[0.5 2.5]': 0, '[0.5 1. ]': 1, '[4. 0.]': 2} #prawdziwe landmarki, ale nie do mockowania samplera
         mock_randomizer = MockRandomizer.return_value
-        mock_randomizer.sample.side_effect = LANDMARKS
+        mock_randomizer.choose.side_effect = LANDMARKS
 
-        self.sut.select_landmarks(l=1)
+        self.sut.select_landmarks()
         landmarks = self.sut.get_landmarks()
         rev_neigh = self.sut.get_rev_neigh()
         expected_rev_neigh = {'[1.  1.5]': np.array([0.5, 2.5]),

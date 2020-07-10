@@ -45,6 +45,9 @@ class WitnessComplexGraphBuilder:
             for node in self.graph.nodes:
                 distances.append(calculate_distance(self.graph.nodes[node]["indices"], us_node))
                 nodes.append(node)
+            # check if there are at least 2 neighbors that neighborhood could be witnessed
+            if (len(distances) < 2):
+                continue
             # check which 2 nodes in graph are the nearest neighbours
             min_distance1 = min(distances)
             nearest_node1 = nodes[distances.index(min_distance1)]
@@ -56,8 +59,6 @@ class WitnessComplexGraphBuilder:
             # if these nodes are not adjacent yet, connect them
             if not self.graph.has_edge(nearest_node1, nearest_node2):
                 self.graph.add_edge(nearest_node1, nearest_node2)
-
-
 
     def get_graph(self):
         return self.graph
