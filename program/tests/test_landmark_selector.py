@@ -4,7 +4,6 @@ import numpy as np
 import networkx as nx
 
 from source.randomizer import Randomizer
-from source.graph import Graph
 from source.landmark_selector import LandmarkSelector
 
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ]), np.array([4., 0.]), np.array([0.5, 2.5]), np.array([0.5, 1]), np.array([3, 2])]
