@@ -1,11 +1,12 @@
 import numpy as np
 import random
-from source import graph, randomizer
+from source import randomizer
+import networkx as nx
 
 
 class RandomWalker:
 
-    def __init__(self, graph: graph.Graph, landmarks_cnt, beta, theta1, theta2):
+    def __init__(self, graph: nx.Graph, landmarks_cnt, beta, theta1, theta2):
         self.beta = beta
         self.theta1 = theta1
         self.theta2 = theta2
@@ -18,7 +19,10 @@ class RandomWalker:
     def __walk_landmark(self, landmark, theta):
         current_node = landmark
         for step in range(theta):
-            rand_choice = randomizer.Randomizer(self.graph.adjacency_dict[str(current_node)])
+            neighbors_info = self.graph[str(current_node)].items()
+            neighbors = list(map(lambda x: x[0], list(neighbors_info)))
+
+            rand_choice = randomizer.Randomizer(neighbors)
             current_node = rand_choice.choose()
         return current_node
 

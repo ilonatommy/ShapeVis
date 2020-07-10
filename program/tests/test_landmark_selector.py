@@ -33,13 +33,6 @@ class TestLandmarkSelector(unittest.TestCase):
         nds = map(lambda i: (str(TEST_SAMPLES[i]), {"indices":TEST_SAMPLES[i], "label": TEST_LABELS[i]}), range(len(TEST_SAMPLES)))
         graph.add_nodes_from(list(nds))
         graph.add_edges_from(INPUT_EDGES)
-        # graph.adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5]), np.array([1.25, 0.  ]), np.array([4., 0.]), np.array([3, 2])],
-        #                         '[1.  1.5]': [np.array([0.5, 1. ]), np.array([1.75, 1.75]), np.array([0.5, 2.5])],
-        #                         '[1.25 0.  ]': [np.array([0.5, 1. ]), np.array([1.75, 1.75])],
-        #                         '[4. 0.]': [np.array([1.25, 0.  ]), np.array([1.75, 1.75]), np.array([3, 2])],
-        #                         '[0.5 2.5]': [np.array([1. , 1.5]), np.array([3, 2])],
-        #                         '[0.5 1. ]': [np.array([1. , 1.5]), np.array([1.25, 0.  ])],
-        #                         '[3 2]': [np.array([1.75 , 1.75]), np.array([0.5, 2.5]), np.array([4, 0])]}
         self.sut = LandmarkSelector(graph)
 
     @patch('source.randomizer.Randomizer')
