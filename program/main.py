@@ -20,7 +20,7 @@ def main():
     print("load_mnist() time: ", time.time() - prev_time)
     
     prev_time = time.time()
-    graph_builder = WitnessComplexGraphBuilder(data_proc, 1)
+    graph_builder = WitnessComplexGraphBuilder(data_proc, 10)
     print("WitnessComplexGraphBuilder() time: ", time.time() - prev_time)
 
     prev_time = time.time()

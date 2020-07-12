@@ -19,7 +19,6 @@ class RandomWalker:
     def __walk_landmark(self, landmark, theta):
         current_node = landmark
         for step in range(theta):
-            print(neighbors_info)
             neighbors_info = self.graph[str(current_node)].items()
             neighbors = list(map(lambda x: x[0], list(neighbors_info)))
 

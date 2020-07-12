@@ -39,7 +39,7 @@ class TestWitnessComplex(unittest.TestCase):
         edges = self.sut.get_graph().edges
         np.testing.assert_array_equal(edges, expected_edges)
 
-    def test_knn_augmentation(self, ):
+    def test_knn_augmentation(self):
         self.sut.build_knn()
         self.sut.build_augmented_knn()
 
