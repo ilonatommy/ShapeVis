@@ -14,10 +14,6 @@ TEST_CLASSES = range(2)
 TEST_SAMPLES_IDXS = [1, 0, 5]
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ])]
 
-def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
-    for key in expected_adjacency_dict.keys():
-        np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
-
 class TestWitnessComplex(unittest.TestCase):
 
     @patch('source.randomizer.Randomizer')

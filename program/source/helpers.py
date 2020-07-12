@@ -7,3 +7,6 @@ def calculate_distance(node1, node2):
     for dim in range(node1.shape[0]):
         sum_dist += (node1[dim] - node2[dim]) * (node1[dim] - node2[dim])
     return np.sqrt(sum_dist)
+
+def most_common(lst):
+    return max(set(lst), key=lst.count)

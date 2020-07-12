@@ -5,6 +5,7 @@ import networkx as nx
 
 from source.randomizer import Randomizer
 from source.landmark_selector import LandmarkSelector
+from tests.helpers import assert_adjacency_dicts_are_equal
 
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ]), np.array([4., 0.]), np.array([0.5, 2.5]), np.array([0.5, 1]), np.array([3, 2])]
 TEST_LABELS = np.array(list(range(len(TEST_SAMPLES))))
@@ -18,11 +19,6 @@ INPUT_EDGES = [('[1.75 1.75]', '[1.  1.5]'),
                ('[1.25 0.  ]', '[0.5 1. ]'),
                ('[4. 0.]', '[3 2]'),
                ('[0.5 2.5]', '[3 2]')]
-
-def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
-    for key in expected_adjacency_dict.keys():
-        np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
-
 
 
 class TestLandmarkSelector(unittest.TestCase):

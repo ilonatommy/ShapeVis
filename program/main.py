@@ -6,7 +6,7 @@ from source.data_processor import DataProcessor
 from source.witness_complex import WitnessComplexGraphBuilder
 from source.landmark_selector import LandmarkSelector
 from source.random_walker import RandomWalker
-
+from source.community_detector import CommunityDetector
 
 def main():
     compare = False
@@ -45,7 +45,7 @@ def main():
     rev_neigh = landmark_selector.get_rev_neigh()
 
     prev_time = time.time()
-    random_walker = RandomWalker(graph, len(landmarks), 2, 1, 1) # TODO fit parameters
+    random_walker = RandomWalker(graph, len(landmarks), 20, 1, 1) # TODO fit parameters
     print("RandomWalker() time: ", time.time() - prev_time)
 
     prev_time = time.time()
@@ -57,6 +57,9 @@ def main():
     print("calculate_weigths() time: ", time.time() - prev_time)
     
     w_matrix = random_walker.get_w_matrix()
+    labels = [graph.nodes[landmark]["label"] for landmark in list(landmarks.keys())]
+
+    igp_graph = CommunityDetector.detect_communities(w_matrix, labels)
 
     if compare:
         algo_comparer = AlgoComparer("TSNE")
