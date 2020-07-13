@@ -15,10 +15,10 @@ LANDMARK_WEIGHTS = [[0.8, 0.5, 0.6],
                     [0.5, 0, 0.1],
                     [0.6, 0.1, 0.2]]
 
-# TODO - now only for debuuging purposes, there should be some expectations added
+# TODO - now only for debuging purposes, there should be some expectations added
 class TestCommunityDetectors(unittest.TestCase):
     def test_community_detector(self):
-        CommunityDetector.detect_communities(WEIGHT_MATRIX, labels, visualize=True)
+        CommunityDetector.detect_communities(WEIGHT_MATRIX, TEST_LABELS)
 
 if __name__ == '__main__':
     unittest.main()
