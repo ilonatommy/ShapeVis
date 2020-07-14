@@ -1,25 +1,27 @@
-from source import graph, randomizer
+from source import randomizer, helpers
+import networkx as nx
 
 
 class LandmarkSelector:
 
-    def __init__(self, graph: graph.Graph):
-        self.graph = graph
+    def __init__(self, graph: nx.Graph):
+        self.graph = graph.copy()
         self.landmarks = dict()
         self.rev_neigh = dict()
 
-    def select_landmarks(self, l: int):
+    def select_landmarks(self):
         l_idx = 0
         while len(self.graph.nodes) > 0:
-            landmark = randomizer.Randomizer(list(self.graph.nodes)).sample()
+            landmark = randomizer.Randomizer(list(self.graph.nodes)).choose()
             self.landmarks[str(landmark)] = l_idx
 
-            # TODO uzupełnić słownik, aby byli widoczni sąsiedzi z drugiej strony
-            for neigh in self.graph.adjacency_dict[str(landmark)]:
-                self.rev_neigh[str(neigh)] = landmark
-                self.graph.remove_node(neigh)
+            landmark_neighbors_info = self.graph[str(landmark)].items()
+            landmark_neighbors = list(map(lambda x: x[0], list(landmark_neighbors_info)))
+            for neigh in landmark_neighbors:
+                self.rev_neigh[neigh] = landmark
 
-            self.graph.remove_node(landmark)
+            self.graph.remove_nodes_from(landmark_neighbors)
+            self.graph.remove_node(str(landmark))
             l_idx = l_idx + 1
 
     def get_landmarks(self):

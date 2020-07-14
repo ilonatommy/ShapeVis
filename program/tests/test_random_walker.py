@@ -4,13 +4,23 @@ import numpy as np
 
 from source.random_walker import RandomWalker
 from source.randomizer import Randomizer
-from source.graph import Graph
 from source.landmark_selector import LandmarkSelector
+import networkx as nx
 
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1., 1.5]), np.array([1.25, 0.]), np.array([4., 0.]),
                  np.array([0.5, 2.5]), np.array([0.5, 1.]), np.array([3., 2.])]
-TEST_LABELS = np.array([list(range(len(TEST_SAMPLES)))])
+TEST_LABELS = np.array(list(range(len(TEST_SAMPLES))))
 LANDMARKS = {'[0.5 2.5]': 0, '[0.5 1. ]': 1, '[4. 0.]': 2}
+
+INPUT_EDGES = [('[1.75 1.75]', '[1.  1.5]'),
+               ('[1.75 1.75]', '[1.25 0.  ]'),
+               ('[1.75 1.75]', '[4. 0.]'),
+               ('[1.75 1.75]', '[3 2]'),
+               ('[1.  1.5]', '[0.5 1. ]'),
+               ('[1.  1.5]', '[0.5 2.5]'),
+               ('[1.25 0.  ]', '[0.5 1. ]'),
+               ('[4. 0.]', '[3 2]'),
+               ('[0.5 2.5]', '[3 2]')]
 
 BETA  = 2
 THETA = 2
@@ -22,15 +32,10 @@ ENDPOINTS = [np.array([0.5, 1.]), np.array([1.75, 1.75]),
 class TestLandmarkSelector(unittest.TestCase):
 
     def setUp(self):
-        graph = Graph(TEST_SAMPLES, TEST_LABELS)
-        graph.adjacency_dict = {
-            '[1.75 1.75]': [np.array([1., 1.5]),    np.array([1.25, 0.]),   np.array([4., 0.]),  np.array([3., 2.])],
-            '[1.  1.5]':   [np.array([0.5, 1.]),    np.array([1.75, 1.75]), np.array([0.5, 2.5])],
-            '[1.25 0.  ]': [np.array([0.5, 1.]),    np.array([1.75, 1.75])],
-            '[4. 0.]':     [np.array([1.25, 0.]),   np.array([1.75, 1.75]), np.array([3., 2.])],
-            '[0.5 2.5]':   [np.array([1., 1.5]),    np.array([3., 2.])],
-            '[0.5 1. ]':   [np.array([1., 1.5]),    np.array([1.25, 0.])],
-            '[3. 2.]':     [np.array([1.75, 1.75]), np.array([0.5, 2.5]),   np.array([4., 0.])]}
+        graph = nx.Graph()
+        nds = map(lambda i: (str(TEST_SAMPLES[i]), {"indices":TEST_SAMPLES[i], "label": TEST_LABELS[i]}), range(len(TEST_SAMPLES)))
+        graph.add_nodes_from(list(nds))
+        graph.add_edges_from(INPUT_EDGES)
         landmarks_cnt = len(LANDMARKS)
         beta = BETA
         theta1 = 1

@@ -14,10 +14,6 @@ TEST_CLASSES = range(2)
 TEST_SAMPLES_IDXS = [1, 0, 5]
 TEST_SAMPLES = [np.array([1.75, 1.75]), np.array([1. , 1.5]), np.array([1.25, 0.  ])]
 
-def assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict):
-    for key in expected_adjacency_dict.keys():
-        np.testing.assert_array_equal(adjacency_dict[key], expected_adjacency_dict[key])
-
 class TestWitnessComplex(unittest.TestCase):
 
     @patch('source.randomizer.Randomizer')
@@ -35,21 +31,17 @@ class TestWitnessComplex(unittest.TestCase):
 
     def test_knn_graph_creation(self):
         self.sut.build_knn()
-        expected_adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5])],
-                                   '[1.  1.5]': [np.array([1.75, 1.75])],
-                                   '[1.25 0.  ]': [np.array([1. , 1.5])]}
-        adjacency_dict = self.sut.get_graph().adjacency_dict
-        assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict)
+        expected_edges = [('[1.75 1.75]', '[1.  1.5]'), ('[1.  1.5]', '[1.25 0.  ]')]
+        edges = self.sut.get_graph().edges
+        np.testing.assert_array_equal(edges, expected_edges)
 
-    def test_knn_augmentation(self, ):
+    def test_knn_augmentation(self):
         self.sut.build_knn()
         self.sut.build_augmented_knn()
-        adjacency_dict = self.sut.get_graph().adjacency_dict
-        expected_adjacency_dict = {'[1.75 1.75]': [np.array([1. , 1.5]), np.array([1.25, 0.  ])],
-                                   '[1.  1.5]': [np.array([1.75, 1.75]), np.array([1.25, 0.  ])],
-                                   '[1.25 0.  ]': [np.array([1. , 1.5]), np.array([1.75, 1.75])]}
-        assert_adjacency_dicts_are_equal(adjacency_dict, expected_adjacency_dict)
-        print(self.sut.get_graph().labels)
+
+        expected_edges = [('[1.75 1.75]', '[1.  1.5]'), ('[1.75 1.75]', '[1.25 0.  ]'), ('[1.  1.5]', '[1.25 0.  ]')]
+        edges = self.sut.get_graph().edges
+        np.testing.assert_array_equal(edges, expected_edges)
 
         
 
