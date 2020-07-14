@@ -8,7 +8,6 @@ GRAPH_SIZE = 10
 NODES = list(range(GRAPH_SIZE))
 EDGES = [(0, 1), (1, 2), (0, 2), (3, 4), (4, 5), (3, 5), (7, 8), (7, 9), (6, 3), (4, 6), (5, 6)]
 
-# TODO - now only for debuging purposes, there should be some expectations added
 class TestManifoldTearer(unittest.TestCase):
     def test_manifold_tearer(self):
         graph = nx.Graph()
