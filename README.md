@@ -9,7 +9,3 @@ Go to the _program_ directory: `cd program` and run the following: `python main.
 
 ## Test run
 The test are written using unittest library. To run them (assuming you are in the _program_ diectory), type: `python -m unittest discover -s tests/`
-
-## TODO
-- Markov Chain
-- performance improvements
