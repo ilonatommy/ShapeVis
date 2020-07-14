@@ -44,7 +44,7 @@ class TestLandmarkSelector(unittest.TestCase):
                               '[1.25 0.  ]': np.array([0.5, 1. ]),
                               '[1.75 1.75]': np.array([4., 0.]),
                               '[3 2]': np.array([0.5, 2.5])}
-        
+        print(landmarks)
         assert_adjacency_dicts_are_equal(rev_neigh, expected_rev_neigh)
 
 

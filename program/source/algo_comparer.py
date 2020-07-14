@@ -4,7 +4,10 @@ import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import math
-
+import source.helpers as helpers
+import networkx as nx
+import pandas as pd
+from matplotlib.pyplot import figure
 
 class AlgoComparer:
     def __init__(self, algo_type):
@@ -54,7 +57,7 @@ class AlgoComparer:
         for class_name_idx in range(len(class_names)):
             class_coords = []
             for index in range(len(labels)):
-                if labels[index] == class_name_idx:
+                if str(labels[index]) == str(class_name_idx):
                     classes_strength[class_name_idx] += 1
                     class_coords.append(transformation_data[index])
             classes_coords.append(class_coords)
@@ -82,6 +85,5 @@ class AlgoComparer:
     def compare(self, data_processor):
         self.transformed_data = self.transformation.fit_transform(data_processor.data)
         self.check_method_quality(data_processor.names, data_processor.labels, self.transformed_data)
-        self.visualise_transformed(self.transformed_data, list(map(int, data_processor.labels.tolist())), data_processor.names)
-
-        # self.visualise_transformed(self.transformed_data, list(map(int, data_processor.labels.tolist())), data_processor.names)
+        # self.visualise_transformed(self.transformed_data, list(map(int, data_processor.labels.tolist())),
+        # data_processor.names)

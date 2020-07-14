@@ -12,21 +12,27 @@ from source.manifold_tearer import ManifoldTearer
 
 def main():
     compare = False
+    limit = 100
+    sampleLimit = int(0.6 * limit)
+    neighboursCnt = 3
+    walk_length = 20 #betha
+    theta1 = 1
+    theta2 = 1
     
     prev_time = time.time()
     data_proc = DataProcessor()
     print("DataProcessor() time: ", time.time() - prev_time)
     
     prev_time = time.time()
-    data_proc.load_mnist(limit=50)
+    data_proc.load_mnist(limit=limit)
     print("load_mnist() time: ", time.time() - prev_time)
-    
+
     prev_time = time.time()
-    graph_builder = WitnessComplexGraphBuilder(data_proc, 30)
+    graph_builder = WitnessComplexGraphBuilder(data_proc, sampleLimit)
     print("WitnessComplexGraphBuilder() time: ", time.time() - prev_time)
 
     prev_time = time.time()
-    graph_builder.build_knn(k=3)
+    graph_builder.build_knn(k=neighboursCnt)
     print("build_knn() time: ", time.time() - prev_time)
 
     prev_time = time.time()
@@ -47,7 +53,7 @@ def main():
     rev_neigh = landmark_selector.get_rev_neigh()
 
     prev_time = time.time()
-    random_walker = RandomWalker(graph, len(landmarks), 20, 1, 1)
+    random_walker = RandomWalker(graph, len(landmarks), walk_length, theta1, theta2)
     print("RandomWalker() time: ", time.time() - prev_time)
 
     prev_time = time.time()
@@ -68,6 +74,9 @@ def main():
     prev_time = time.time()
     final_graph = ManifoldTearer.reduce_edges(igp_graph, igp_labels)
     print("Manifold tearing time: ", time.time() - prev_time)
+
+    comparer = AlgoComparer("")
+    comparer.check_method_quality(range(10))
 
     if compare:
         algo_comparer = AlgoComparer("TSNE")

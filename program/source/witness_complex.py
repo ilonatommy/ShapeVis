@@ -30,7 +30,7 @@ class WitnessComplexGraphBuilder:
         unsampled_nodes = [node for node in self.original_input.data if not self.knn_graph.has_node(node)]
         return unsampled_nodes
     
-    def build_knn(self, k = 1):
+    def build_knn(self, k=1):
         for node in self.sampled_graph.nodes:
             node_neighbors_edges = sorted(self.sampled_graph.edges(str(node), data=True), key=lambda e: e[2]["weight"])[:k]
             self.knn_graph.add_edges_from(node_neighbors_edges)
